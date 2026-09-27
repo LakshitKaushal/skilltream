@@ -1,0 +1,34 @@
+services:
+  # ── Backend (Node.js / Express) ──────────────────────────────────────────
+  - type: web
+    name: skillstream-backend
+    runtime: node
+    rootDir: skillstream-mern/backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGO_URI
+        sync: false          # Set this manually in Render dashboard → MongoDB Atlas URI
+      - key: JWT_SECRET
+        sync: false          # Set this manually in Render dashboard → any long random string
+      - key: ADMIN_EMAIL
+        sync: false          # Set this manually → your admin email
+
+  # ── Frontend (React + Vite) ───────────────────────────────────────────────
+  - type: web
+    name: skillstream-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        sync: false          # Set this to your backend URL after deploying backend e.g. https://skillstream-backend.onrender.com/api/v1
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
